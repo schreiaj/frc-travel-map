@@ -180,11 +180,13 @@ events = ["2014abca",
 events.forEach(loadEvent)
 
 function select(code){
+  svg.selectAll(".arc").classed("hidden", true)
   svg.selectAll(code).classed("active", true)
 }
 
 function deselect(code){
   svg.selectAll(".active").classed("active", false)
+  svg.selectAll(".arc").classed("hidden", false)
 }
 
 
@@ -211,6 +213,13 @@ function updateRenderedEvents(){
     stroke-width: 0.5;
   }
 
+
+
+  .hidden{
+    stroke-opacity: 0.1;
+    stroke: gray;
+    stroke-width: 0.05;
+  }
   .active{
     stroke-opacity: 0.6;
     stroke: red;
