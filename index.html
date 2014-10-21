@@ -7,8 +7,12 @@
 
 </style>
 <body>
+
+
 <script src="http://d3js.org/d3.v3.min.js"></script>
 <script src="http://d3js.org/topojson.v1.min.js"></script>
+<script src="http://d3js.org/d3.geo.projection.v0.min.js"></script>
+
 <script>
 
 /* JavaScript goes here. */
@@ -18,31 +22,40 @@ var width = 1000,
 var svg = d3.select("body").append("svg")
     .attr("width", width)
     .attr("height", height);
+
 var list = d3.select("body").append("ul").classed("list", true)
 
 var renderedEvents = []
 
+// var colorScale = d3.scale.category10().domain([0,10000]);
+//
 var mercator = d3.geo.mercator()
+  .rotate([90, 0])
   .scale((width + 1) / 2 / Math.PI)
   .translate([width / 2, height / 2])
-  .precision(.1);
+  .precision(.1)
 
 d3.json("countries.geo.json", function(error, world) {
-  svg.selectAll("path")
-    .data(world.features)
-    .enter()
-    .append("path")
+  svg.insert("path", ".graticule")
+    .datum(topojson.feature(world, world.objects.land))
+    .attr("class", "land")
     .attr("d", d3.geo.path().projection(mercator));
 });
 
 var path = d3.geo.path()
   .projection(mercator)
 
+
+var graticule = d3.geo.graticule();
+
+svg.append("path")
+    .datum(graticule)
+    .attr("class", "graticule")
+    .attr("d", d3.geo.path().projection(mercator));
+
 function loadEvent(eventCode){
 
   d3.json(eventCode+".json", function(error, event){
-    console.log("Loading " + eventCode);
-    console.log(event.length);
     links = []
     event.forEach(function(e){
       links.push({
@@ -64,11 +77,11 @@ function loadEvent(eventCode){
       .attr("id", function(d){return d.team})
       .classed("arc", true)
       .classed("frc"+eventCode, true)
+      // .attr("style", function(d){return "stroke:"+colorScale(d.distance)+";"})
       // .on("mouseover", function(d){return select("#"+d.team)})
       // .on("mouseout", function(d){return deselect(d)})
     renderedEvents.push(eventCode)
     updateRenderedEvents();
-    console.log("Done");
   })
 
 }
@@ -208,7 +221,7 @@ function updateRenderedEvents(){
   }
 
   .arc{
-    stroke-opacity: 0.2;
+    stroke-opacity: 0.3;
     stroke: gray;
     stroke-width: 0.5;
   }
@@ -239,6 +252,19 @@ function updateRenderedEvents(){
 
   .list li{
     padding-top:5px;
+  }
+
+  .boundary {
+    fill: none;
+    stroke: #fff;
+    stroke-width: .5px;
+  }
+
+  .graticule {
+    fill: none;
+    stroke: #777;
+    stroke-width: .5px;
+    stroke-opacity: .25;
   }
 }
 </style>
