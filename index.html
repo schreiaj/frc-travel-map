@@ -42,8 +42,11 @@ d3.json("countries.geo.json", function(error, world) {
     .attr("d", d3.geo.path().projection(mercator));
 });
 
+
 d3.json("events-2014.json", function(error, events) {
   events.forEach(function(e){
+    e.start_date = Date(e.start_date)
+    e.end_date = Date(e.end_date)
     if(e.official)
       loadEvent(e)
   })
@@ -84,6 +87,8 @@ function loadEvent(e){
       .attr("id", function(d){return d.team})
       .classed("arc", true)
       .classed("frc"+e.key, true)
+      .classed((e.event_district_string||"").replace(" ","_").toLowerCase(), true)
+      .classed("district", e.event_district_string != null)
       // .attr("style", function(d){return "stroke:"+colorScale(d.distance)+";"})
       // .on("mouseover", function(d){return select("#"+d.team)})
       // .on("mouseout", function(d){return deselect(d)})
