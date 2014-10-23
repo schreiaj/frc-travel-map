@@ -42,6 +42,13 @@ d3.json("countries.geo.json", function(error, world) {
     .attr("d", d3.geo.path().projection(mercator));
 });
 
+d3.json("events-2014.json", function(error, events) {
+  events.forEach(function(e){
+    if(e.official)
+      loadEvent(e)
+  })
+})
+
 var path = d3.geo.path()
   .projection(mercator)
 
@@ -53,9 +60,9 @@ svg.append("path")
     .attr("class", "graticule")
     .attr("d", d3.geo.path().projection(mercator));
 
-function loadEvent(eventCode){
+function loadEvent(e){
 
-  d3.json(eventCode+".json", function(error, event){
+  d3.json(e.key+".json", function(error, event){
     links = []
     event.forEach(function(e){
       links.push({
@@ -76,121 +83,18 @@ function loadEvent(eventCode){
       .attr("d", path)
       .attr("id", function(d){return d.team})
       .classed("arc", true)
-      .classed("frc"+eventCode, true)
+      .classed("frc"+e.key, true)
       // .attr("style", function(d){return "stroke:"+colorScale(d.distance)+";"})
       // .on("mouseover", function(d){return select("#"+d.team)})
       // .on("mouseout", function(d){return deselect(d)})
-    renderedEvents.push(eventCode)
+    renderedEvents.push(e)
     updateRenderedEvents();
   })
 
 }
 
-events = ["2014abca",
-  "2014arc",
-  "2014arfa",
-  "2014azch",
-  "2014calb",
-  "2014cama",
-  "2014casa",
-  "2014casb",
-  "2014casd",
-  "2014casj",
-  "2014cmp",
-  "2014code",
-  "2014ctgro",
-  "2014cthar",
-  "2014ctsou",
-  "2014cur",
-  "2014dcwa",
-  "2014flfo",
-  "2014flor",
-  "2014gadu",
-  "2014gal",
-  "2014hiho",
-  "2014ilch",
-  "2014ilil",
-  "2014inth",
-  "2014inwl",
-  "2014ista",
-  "2014lake",
-  "2014mabos",
-  "2014mawor",
-  "2014mdba",
-  "2014melew",
-  "2014mibed",
-  "2014micen",
-  "2014micmp",
-  "2014miesc",
-  "2014migul",
-  "2014mihow",
-  "2014miket",
-  "2014milan",
-  "2014miliv",
-  "2014mimid",
-  "2014misjo",
-  "2014misou",
-  "2014mitry",
-  "2014mitvc",
-  "2014miwat",
-  "2014miwmi",
-  "2014mndu",
-  "2014mndu2",
-  "2014mnmi",
-  "2014mnmi2",
-  "2014mokc",
-  "2014mosl",
-  "2014mrcmp",
-  "2014mxmc",
-  "2014ncre",
-  "2014necmp",
-  "2014new",
-  "2014nhdur",
-  "2014nhnas",
-  "2014njbri",
-  "2014njcli",
-  "2014njfla",
-  "2014njtab",
-  "2014nvlv",
-  "2014nyli",
-  "2014nyny",
-  "2014nyro",
-  "2014nytr",
-  "2014ohci",
-  "2014ohcl",
-  "2014okok",
-  "2014onnb",
-  "2014onto",
-  "2014onto2",
-  "2014onwa",
-  "2014onwi",
-  "2014orore",
-  "2014orosu",
-  "2014orwil",
-  "2014pahat",
-  "2014paphi",
-  "2014papi",
-  "2014pncmp",
-  "2014qcmo",
-  "2014rismi",
-  "2014scmb",
-  "2014tnkn",
-  "2014txda",
-  "2014txho",
-  "2014txlu",
-  "2014txsa",
-  "2014utwv",
-  "2014vari",
-  "2014waahs",
-  "2014waamv",
-  "2014wache",
-  "2014waell",
-  "2014wamou",
-  "2014washo",
-  "2014wasno",
-  "2014wimi"]
 
-events.forEach(loadEvent)
+
 
 function select(code){
   svg.selectAll(".arc").classed("hidden", true)
@@ -208,9 +112,9 @@ function updateRenderedEvents(){
     .data(renderedEvents)
     .enter()
     .append("li")
-    .text(function(d){return d})
-    .on("mouseover", function(d){return select(".frc"+d)})
-    .on("mouseout", function(d){return deselect(d)})
+    .text(function(d){return d.short_name})
+    .on("mouseover", function(d){return select(".frc"+d.key)})
+    .on("mouseout", function(d){return deselect(d.key)})
 }
 </script>
 <style media="screen">
