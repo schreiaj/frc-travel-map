@@ -56,6 +56,10 @@ var path = d3.geo.path()
   .projection(mercator)
 
 
+var eventTypeScale = d3.scale.ordinal()
+  .domain([0, 1, 2, 3, 4, 99, 100, -1])
+  .range(['regional', 'district', 'district_championship', 'championship_division', 'championship_finals', 'offseason', 'preseason', '' ])
+
 var graticule = d3.geo.graticule();
 
 svg.append("path")
@@ -88,7 +92,7 @@ function loadEvent(e){
       .classed("arc", true)
       .classed("frc"+e.key, true)
       .classed((e.event_district_string||"").replace(" ","_").toLowerCase(), true)
-      .classed("district", e.event_district_string != null)
+      .classed(eventTypeScale(e.event_type), true)
       // .attr("style", function(d){return "stroke:"+colorScale(d.distance)+";"})
       // .on("mouseover", function(d){return select("#"+d.team)})
       // .on("mouseout", function(d){return deselect(d)})
