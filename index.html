@@ -10,7 +10,10 @@
 <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/dc/2.0.0-alpha.2/dc.css" media="screen" title="no title" charset="utf-8">
 <body>
 
-<svg width=100% height=100% viewBox="0 0 1000 600"></svg>
+<svg width=90% height=90% viewBox="0 0 1000 600"></svg>
+<div id="distanceChart">
+
+</div>
 
 <script src="http://d3js.org/d3.v3.min.js"></script>
 <script src="http://d3js.org/topojson.v1.min.js"></script>
@@ -30,7 +33,7 @@ var svg = d3.select("body").select("svg")
     // .attr("width", width)
     // .attr("height", height);
 
-d3.select("body").append("div").attr("id", "distanceChart")
+
 
 var list = d3.select("body").append("ul").classed("list", true)
 
@@ -243,6 +246,12 @@ function updateRenderedEvents(){
 
   svg{
     min-height:400px;
+  }
+
+  #distanceChart {
+    position: absolute;
+    bottom:0%;
+
   }
 }
 </style>
