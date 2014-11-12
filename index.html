@@ -134,6 +134,7 @@ distanceChart = dc.lineChart("#distanceChart").dimension(filters['distance'])
   .height(150)
   .elasticX(true)
   .elasticY(true)
+  .on("filtered", function(chart, filter){updateRenderedEvents()})
 
 
 teamChart = dc.dataTable("#eventChart")
@@ -151,6 +152,7 @@ teamChart = dc.dataTable("#eventChart")
   .sortBy(function(d){
     d.eventData.key
   })
+
 
 
 dc.renderAll()
