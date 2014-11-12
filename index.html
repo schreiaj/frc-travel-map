@@ -1,20 +1,98 @@
 <!DOCTYPE html>
 <html>
 <meta charset="utf-8">
-<style>
 
-/* CSS goes here. */
-
-</style>
 
 <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/dc/2.0.0-alpha.2/dc.css" media="screen" title="no title" charset="utf-8">
+<link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet">
+<style>
+  path{
+    fill:none;
+    stroke: gray;
+    stroke-width: 1.2;
+  }
+
+  .arc{
+    stroke-opacity: 0.3;
+    stroke: gray;
+    stroke-width: 0.5;
+  }
+
+
+
+  .hidden{
+    stroke-opacity: 0.1;
+    stroke: gray;
+    stroke-width: 0.05;
+  }
+  .active{
+    stroke-opacity: 0.6;
+    stroke: red;
+    stroke-width: 0.75;
+  }
+
+
+
+  .boundary {
+    fill: none;
+    stroke: #fff;
+    stroke-width: .5px;
+  }
+
+  .graticule {
+    fill: none;
+    stroke: #777;
+    stroke-width: .5px;
+    stroke-opacity: .25;
+  }
+
+  .map {
+    width: 100%;
+    height: 50%;
+    border:.5px solid black;
+  }
+
+
+  body{
+    width:80%;
+    margin-left:10%;
+    margin-right: 10%;
+  }
+
+  h1{
+    font-weight: 100;
+    font-size: 3em;
+  }
+
+
+
+
+}
+</style>
 <body>
 
-<svg width=90% height=90% viewBox="0 0 1000 600"></svg>
-<div id="distanceChart">
+<h1><span class="pull-right"><small>2014</small>FRC Team Travel</span></h1>
+
+<div class="row" >
+  <div class="col-sm-9">
+    <div id="distanceChart">
+    </div>
+    <svg viewBox="0 0 1000 600" class="map"></svg>
+
+  </div>
+  <div class="col-sm-3">
+    <div id="eventChart">
+  </div>
 
 </div>
 
+
+</div>
+
+
+
+</div>
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
 <script src="http://d3js.org/d3.v3.min.js"></script>
 <script src="http://d3js.org/topojson.v1.min.js"></script>
 <script src="http://d3js.org/d3.geo.projection.v0.min.js"></script>
@@ -53,9 +131,27 @@ distanceChart = dc.lineChart("#distanceChart").dimension(filters['distance'])
   .x(d3.scale.linear().domain([0,0]))
   .group(filters['distance'].group())
   .width(1000)
-  .height(300)
+  .height(150)
   .elasticX(true)
   .elasticY(true)
+
+
+teamChart = dc.dataTable("#eventChart")
+  .dimension(filters['event'])
+  .group(function(d){
+
+    return d.eventData.key
+  })
+  .columns([
+    function(d){
+      return d.key
+    }
+    ])
+  .size(Infinity)
+  .sortBy(function(d){
+    d.eventData.key
+  })
+
 
 dc.renderAll()
 
@@ -169,13 +265,13 @@ function deselect(code){
 
 
 function updateRenderedEvents(){
-  list.selectAll("li")
-    .data(renderedEvents)
-    .enter()
-    .append("li")
-    .text(function(d){return d.short_name})
-    .on("mouseover", function(d){return select(".frc"+d.key)})
-    .on("mouseout", function(d){return deselect(d.key)})
+  // list.selectAll("li")
+  //   .data(renderedEvents)
+  //   .enter()
+  //   .append("li")
+  //   .text(function(d){return d.short_name})
+  //   .on("mouseover", function(d){return select(".frc"+d.key)})
+  //   .on("mouseout", function(d){return deselect(d.key)})
     renderTravel(filters['distance'].top(Infinity))
     distanceChart
       .x(d3.scale.linear().domain([filters['distance'].bottom(1)[0].distance||0, filters['distance'].top(1)[0].distance||0]))
@@ -185,75 +281,6 @@ function updateRenderedEvents(){
 
 
 </script>
-<style media="screen">
-  path{
-    fill:none;
-    stroke: gray;
-    stroke-width: 1.2;
-  }
 
-  .arc{
-    stroke-opacity: 0.3;
-    stroke: gray;
-    stroke-width: 0.5;
-  }
-
-
-
-  .hidden{
-    stroke-opacity: 0.1;
-    stroke: gray;
-    stroke-width: 0.05;
-  }
-  .active{
-    stroke-opacity: 0.6;
-    stroke: red;
-    stroke-width: 0.75;
-  }
-
-  .list{
-    /*font-size: 12px;*/
-    position: absolute;
-    /*left: 1000px;*/
-    right: 10px;
-    top: 0px;
-    height: 90%;
-    overflow: scroll;
-    width: 200px;
-    cursor: pointer;
-    background-color: rgba(20,20,20,.6);
-    margin-top:10px;
-    border-radius: 5px;
-    color: white;
-  }
-
-  .list li{
-    padding-top:5px;
-  }
-
-  .boundary {
-    fill: none;
-    stroke: #fff;
-    stroke-width: .5px;
-  }
-
-  .graticule {
-    fill: none;
-    stroke: #777;
-    stroke-width: .5px;
-    stroke-opacity: .25;
-  }
-
-  svg{
-    min-height:400px;
-  }
-
-  #distanceChart {
-    position: absolute;
-    bottom:0%;
-
-  }
-}
-</style>
 </body>
 </html>
