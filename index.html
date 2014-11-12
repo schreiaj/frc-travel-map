@@ -3,8 +3,9 @@
 <meta charset="utf-8">
 
 
-<link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/dc/2.0.0-alpha.2/dc.css" media="screen" title="no title" charset="utf-8">
+
 <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/dc/2.0.0-alpha.2/dc.css" media="screen">
 <style>
   path{
     fill:none;
@@ -49,8 +50,9 @@
   .map {
     width: 100%;
     height: 50%;
-    border:.5px solid black;
   }
+
+
 
 
   body{
@@ -71,7 +73,7 @@
 </style>
 <body>
 
-<h1><span class="pull-right"><small>2014</small>FRC Team Travel</span></h1>
+<h1><span class="pull-right"><small>2014</small> FRC Team Travel</span></h1>
 
 <div class="row" >
   <div class="col-sm-9">
@@ -82,8 +84,14 @@
   </div>
   <div class="col-sm-3">
     <div id="eventChart">
+    </div>
   </div>
-
+</div>
+<div class="row">
+  <div class="col-sm-9">
+    <ul id="teamChart" class="ul">
+    </ul>
+  </div>
 </div>
 
 
@@ -92,6 +100,7 @@
 
 
 </div>
+<script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
 <script src="http://d3js.org/d3.v3.min.js"></script>
 <script src="http://d3js.org/topojson.v1.min.js"></script>
@@ -120,11 +129,28 @@ var renderedEvents = []
 var cFilter = crossfilter()
 
 var filters = {}
+var groups = {}
 
 filters['distance'] = cFilter.dimension(function(d){return 10*Math.floor(d.distance/10,1)})
 filters['team'] = cFilter.dimension(function(d){return d.team})
 filters['event'] = cFilter.dimension(function(d){return d.eventData.key})
 filters['eventType'] = cFilter.dimension(function(d){return eventTypeScale(d.eventData.event_type)})
+
+groups['teamTravel'] = filters['team'].group().reduce(
+  function(p,v){
+    ++p.count;
+    p.distance += v.distance
+    return p
+  },
+  function(p,v){
+    --p.count;
+    p.distance-= v.distance
+    return p
+  },
+  function(){
+    return {count: 0, distance: 0}
+  }
+).order(dc.pluck("distance"))
 
 
 distanceChart = dc.lineChart("#distanceChart").dimension(filters['distance'])
@@ -137,21 +163,8 @@ distanceChart = dc.lineChart("#distanceChart").dimension(filters['distance'])
   .on("filtered", function(chart, filter){updateRenderedEvents()})
 
 
-teamChart = dc.dataTable("#eventChart")
-  .dimension(filters['event'])
-  .group(function(d){
 
-    return d.eventData.key
-  })
-  .columns([
-    function(d){
-      return d.key
-    }
-    ])
-  .size(Infinity)
-  .sortBy(function(d){
-    d.eventData.key
-  })
+
 
 
 
@@ -165,7 +178,7 @@ dc.renderAll()
 var mercator = d3.geo.mercator()
   .rotate([90, 0])
   .scale((width + 1) / 2 / Math.PI)
-  .translate([width / 2, height / 2])
+  .translate([width / 2, height / 2+100])
   .precision(.1)
 
 d3.json("countries.geo.json", function(error, world) {
@@ -249,6 +262,10 @@ function renderTravel(data){
     // .on("mouseout", function(d){return deselect(d)})
 }
 
+function renderTeams(data){
+    console.log(data.length);
+}
+
 
 
 function select(code){
@@ -275,6 +292,13 @@ function updateRenderedEvents(){
   //   .on("mouseover", function(d){return select(".frc"+d.key)})
   //   .on("mouseout", function(d){return deselect(d.key)})
     renderTravel(filters['distance'].top(Infinity))
+    fakeTeamDimension = {
+      top: function(x){
+        return groups['teamTravel'].top(x).map(function(grp){
+          return {"team": grp.key, "distance": grp.value.distance, "events": grp.value.count}})
+      }
+    }
+    renderTeams(fakeTeamDimension.top(25))
     distanceChart
       .x(d3.scale.linear().domain([filters['distance'].bottom(1)[0].distance||0, filters['distance'].top(1)[0].distance||0]))
     dc.redrawAll()
