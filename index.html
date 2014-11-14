@@ -78,7 +78,7 @@
 <h1><span class="pull-right"><small>2014</small> FRC Team Travel</span></h1>
 
 <div class="row" >
-  <div class="col-sm-9">
+  <div class="col-sm-12">
     <div id="distanceChart" class="col-sm-12">
     </div>
     <svg viewBox="0 0 1000 600" id= "teamMap" class="map"></svg>
@@ -166,7 +166,7 @@ distanceChart = dc.lineChart("#distanceChart").dimension(filters['distance'])
   .renderlet(
                 function(chart) {
                     chart.select("svg").attr("width", "100%").attr("height","100%").attr("viewBox",
-                            "0 0 " + 1000 + " " + 150).attr("preserveAspectRatio", "xMidYMax")
+                            "0 0 " + 1000 + " " + 150)//.attr("preserveAspectRatio", "xMidYMax")
                 })
 
 
