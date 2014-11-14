@@ -197,7 +197,7 @@ distanceChart = dc.lineChart("#distanceChart").dimension(filters['distance'])
                   fakeTeamDimension = {
                     top: function(x){
                       return groups['teamTravel'].top(x).map(function(grp){
-                        return [grp.key, grp.value.distance,  grp.value.count]
+                        return ["<a target='_blank' href='http://www.thebluealliance.com/team/"+grp.key+"'>"+grp.key+"</a>", grp.value.distance,  grp.value.count]
                       })
                     }
                   }
