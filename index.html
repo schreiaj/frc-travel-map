@@ -108,6 +108,8 @@
   </div>
 </div>
 
+<a href="Javascript:downloadData()"><button class="btn btn-primary pull-right">Download</button></a>
+
 
 </div>
 
@@ -124,6 +126,24 @@
 
 <script>
 
+
+function downloadData(){
+  fakeTeamDimension = {
+    top: function(x){
+      return groups['teamTravel'].top(x).map(function(grp){
+        return {"team": grp.key, "distance": grp.value.distance, "events": grp.value.count}})
+    }
+  }
+  var data = d3.csv.format(fakeTeamDimension.top(Infinity)),
+    element = document.createElement('a'),
+    mimeType = 'text/csv',
+    file = new Blob([data], {type: mimeType}),
+    fileURL = URL.createObjectURL(file);
+  element.download = 'teams.csv';
+  element.href = fileURL;
+  element.dataset.downloadurl = [mimeType, element.download, element.href].join(":");
+  element.click();
+  }
 
 var width = 1000,
     height = 600;
