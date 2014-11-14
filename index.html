@@ -66,7 +66,9 @@
     font-size: 3em;
   }
 
-
+  #distanceChart{
+    min-height: 150px;
+  }
 
 
 }
@@ -77,9 +79,9 @@
 
 <div class="row" >
   <div class="col-sm-9">
-    <div id="distanceChart">
+    <div id="distanceChart" class="col-sm-12">
     </div>
-    <svg viewBox="0 0 1000 600" class="map"></svg>
+    <svg viewBox="0 0 1000 600" id= "teamMap" class="map"></svg>
 
   </div>
   <div class="col-sm-3">
@@ -116,7 +118,7 @@
 var width = 1000,
     height = 600;
 
-var svg = d3.select("body").select("svg")
+var svg = d3.select("body").select("#teamMap")
     // .attr("width", width)
     // .attr("height", height);
 
@@ -161,6 +163,11 @@ distanceChart = dc.lineChart("#distanceChart").dimension(filters['distance'])
   .elasticX(true)
   .elasticY(true)
   .on("filtered", function(chart, filter){updateRenderedEvents()})
+  .renderlet(
+                function(chart) {
+                    chart.select("svg").attr("width", "100%").attr("height","100%").attr("viewBox",
+                            "0 0 " + 1000 + " " + 150).attr("preserveAspectRatio", "xMidYMax")
+                })
 
 
 
