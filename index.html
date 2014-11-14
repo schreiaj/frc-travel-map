@@ -71,6 +71,18 @@
   }
 
 
+  #eventTypeList
+  {
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+  text-align: center;
+  }
+
+  #eventTypeList li { display: inline; padding: 10px; }
+
+
+
 }
 </style>
 <body>
@@ -82,16 +94,16 @@
     <div id="distanceChart" class="col-sm-12">
     </div>
     <svg viewBox="0 0 1000 600" id= "teamMap" class="map"></svg>
+    <ul id="eventTypeList">
+      <li><a href="Javascript:filters['eventType'].filterAll(); dc.redrawAll();">all</a></li>
+    </ul>
+  </div>
 
-  </div>
-  <div class="col-sm-3">
-    <div id="eventChart">
-    </div>
-  </div>
 </div>
 <div class="row">
   <div class="col-sm-9">
     <ul id="teamChart" class="ul">
+
     </ul>
   </div>
 </div>
@@ -113,8 +125,6 @@
 <script>
 
 
-// var distanceChart = dc.lineChart("#distanceChart")
-/* JavaScript goes here. */
 var width = 1000,
     height = 600;
 
@@ -123,8 +133,6 @@ var svg = d3.select("body").select("#teamMap")
     // .attr("height", height);
 
 
-
-var list = d3.select("body").append("ul").classed("list", true)
 
 var renderedEvents = []
 
@@ -162,18 +170,12 @@ distanceChart = dc.lineChart("#distanceChart").dimension(filters['distance'])
   .height(150)
   .elasticX(true)
   .elasticY(true)
-  .on("filtered", function(chart, filter){updateRenderedEvents()})
   .renderlet(
                 function(chart) {
+                    renderTravel(filters['distance'].top(Infinity))
                     chart.select("svg").attr("width", "100%").attr("height","100%").attr("viewBox",
                             "0 0 " + 1000 + " " + 150)//.attr("preserveAspectRatio", "xMidYMax")
                 })
-
-
-
-
-
-
 
 dc.renderAll()
 
@@ -212,6 +214,8 @@ var path = d3.geo.path()
 var eventTypeScale = d3.scale.ordinal()
   .domain([0, 1, 2, 3, 4, 99, 100, -1])
   .range(['regional', 'district', 'district_championship', 'championship_division', 'championship_finals', 'offseason', 'preseason', '' ])
+
+d3.selectAll("#eventTypeList").selectAll("li").data(eventTypeScale.range()).enter().append("li").append("a").attr("href", function(d){return "Javascript:filters['eventType'].filter('"+d+"');dc.redrawAll();"}).text(function(d){ return d})
 
 var graticule = d3.geo.graticule();
 
@@ -298,14 +302,14 @@ function updateRenderedEvents(){
   //   .text(function(d){return d.short_name})
   //   .on("mouseover", function(d){return select(".frc"+d.key)})
   //   .on("mouseout", function(d){return deselect(d.key)})
-    renderTravel(filters['distance'].top(Infinity))
-    fakeTeamDimension = {
-      top: function(x){
-        return groups['teamTravel'].top(x).map(function(grp){
-          return {"team": grp.key, "distance": grp.value.distance, "events": grp.value.count}})
-      }
-    }
-    renderTeams(fakeTeamDimension.top(25))
+
+    // fakeTeamDimension = {
+    //   top: function(x){
+    //     return groups['teamTravel'].top(x).map(function(grp){
+    //       return {"team": grp.key, "distance": grp.value.distance, "events": grp.value.count}})
+    //   }
+    // }
+    // renderTeams(fakeTeamDimension.top(25))
     distanceChart
       .x(d3.scale.linear().domain([filters['distance'].bottom(1)[0].distance||0, filters['distance'].top(1)[0].distance||0]))
     dc.redrawAll()
