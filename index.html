@@ -96,7 +96,7 @@
     </div>
     <svg viewBox="0 0 1000 600" id= "teamMap" class="map"></svg>
     <ul id="eventTypeList">
-      <li><a href="Javascript:filters['eventType'].filterAll(); dc.redrawAll();">all</a></li>
+
     </ul>
   </div>
 
@@ -246,6 +246,7 @@ var eventTypeScale = d3.scale.ordinal()
   .range(['regional', 'district', 'district_championship', 'championship_division', 'championship_finals', 'offseason', 'preseason', '' ])
 
 d3.selectAll("#eventTypeList").selectAll("li").data(eventTypeScale.range()).enter().append("li").append("a").attr("href", function(d){return "Javascript:filters['eventType'].filter('"+d+"');dc.redrawAll();"}).text(function(d){ return d})
+d3.selectAll("#eventTypeList").append("li").append("a").attr("href", function(d){return "Javascript:filters['eventType'].filterAll();dc.redrawAll();"}).text("all")
 
 var graticule = d3.geo.graticule();
 
